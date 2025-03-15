@@ -7,8 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -40,9 +38,15 @@ public class Grade {
 	@JoinColumn(name = "StId")
 	private Student student;
 	
-	//TODO uztaisīt sasaisti ar Course klasi
 	@ManyToOne
-	@JoinColumn(name = "cId")
+	@JoinColumn(name = "CId")
 	private Course course;
+	
+	
+	public Grade(int grvalue, Student student, Course course) {
+		setGrvalue(grvalue);
+		setStudent(student);
+		setCourse(course);
+	}
 	
 }
