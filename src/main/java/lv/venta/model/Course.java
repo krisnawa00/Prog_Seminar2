@@ -1,5 +1,6 @@
 package lv.venta.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import jakarta.persistence.Column;
@@ -8,6 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -32,7 +35,7 @@ import lombok.ToString;
 public class Course {
 	@Setter(value = AccessLevel.NONE)
 	@Id
-	@Column(name = "cId")
+	@Column(name = "CId")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int cId;
 	
@@ -46,19 +49,44 @@ public class Course {
 	@Min(0)
 	@Max(30)
 	private int creditpoints;
-	
+	//piemeram par saiti viens-pret-viens
+	/*
 	@OneToOne
 	@JoinColumn(name = "PId")//izveidos kursa tabulā papildus kolonu PiD, kas sasaistīs profesoru ar kursu
 	private Professor professor;
+	*/
 	
-	@OneToMany(mappedBy ="course")
+	@ManyToMany
+	@JoinTable(name = "CourseProfessorTable", 
+	joinColumns = @JoinColumn(name = "PId"),
+	inverseJoinColumns = @JoinColumn(name = "CId"))//MYSQL - course_professor_table
+	private Collection<Professor> professors = new ArrayList<Professor>();
+	
+	
+	
+	
+	@OneToMany(mappedBy = "course")
 	@ToString.Exclude
-	private Collection<Grade> grade;
+	private Collection<Grade> grades;
 	
-	public Course(String title, int creditpoints, Professor professor) {
+	
+	
+	
+	
+	public Course(String title, int creditpoints, Professor ... professors) {
 		setTitle(title);
 		setCreditpoints(creditpoints);
-		setProfessor(professor);
+		for(Professor tempP : professors) {
+			addProfessor(tempP);
+		}
 	}
+	
+	public void addProfessor(Professor professor) {
+		if(!professors.contains(professor)) {
+			professors.add(professor);
+		}
+	}
+	
+	//TODO uztaisīt removeProfessor funkciju
 	
 }
